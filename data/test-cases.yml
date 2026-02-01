@@ -1,0 +1,321 @@
+# 搜索能力测试用例（基于 document.md）
+
+# ============================================
+# 一、时效性（Freshness）测试
+# ============================================
+
+timeliness_tests:
+  - id: "T1-freshness-7days"
+    name: "硬7天窗口（新闻/公告）"
+    category: "时效性"
+    prompt: |
+      请总结**过去 7 天内（以今天为准）**，AI 领域发生的 **3 条最重要更新**。
+      要求：
+      - 每条必须包含：事件概述、来源标题、发布日期、链接
+      - 如果 7 天内不足 3 条，请明确说明"未找到"，不要使用更早信息补充
+
+    judgment_criteria:
+      - criterion: "是否混入 >7 天的新闻"
+        weight: 5
+        check_method: "检查所有提及的日期是否在7天窗口内"
+
+      - criterion: "是否明确统计区间"
+        weight: 5
+        check_method: "检查回答中是否说明了时间范围"
+
+    max_score: 10
+
+  - id: "T2-latest-release"
+    name: "最近一次更新（开源/产品）"
+    category: "时效性"
+    prompt: |
+      请查证 **Docker** 最近一次 **正式版本发布** 的日期、版本号和主要变更。
+      要求引用官方来源。
+
+    judgment_criteria:
+      - criterion: "是否真的是'最近一次'"
+        weight: 5
+        check_method: "验证版本号和日期的准确性"
+
+      - criterion: "是否引用官方来源（changelog/release页面）"
+        weight: 5
+        check_method: "检查来源是否为官方文档而非博客"
+
+    max_score: 10
+
+  - id: "T3-uncertain-time"
+    name: "时间不确定场景"
+    category: "时效性"
+    prompt: |
+      在过去 **30 天内**，是否有关于 **AI 模型监管** 的**官方政策或草案**发布？
+      如果没有，请明确说明"未检索到"。
+
+    judgment_criteria:
+      - criterion: "是否敢说'没有/未发现'"
+        weight: 6
+        check_method: "如果确实没有，是否诚实回答而非编造"
+
+      - criterion: "是否编造'看起来合理'的政策"
+        weight: 4
+        check_method: "验证提及的政策是否真实存在"
+
+    max_score: 10
+
+# ============================================
+# 二、准确度（Factuality）测试
+# ============================================
+
+accuracy_tests:
+  - id: "A1-fact-check"
+    name: "精确事实核查"
+    category: "准确度"
+    prompt: |
+      请给出 **Transformer** 架构最早提出的论文：
+      - 论文标题
+      - 作者
+      - 发表年份
+      - 论文主要贡献（一句话）
+      要求至少 2 个权威来源。
+
+    judgment_criteria:
+      - criterion: "年份/作者是否准确"
+        weight: 6
+        check_method: "验证是否为'Attention Is All You Need'（2017，Vaswani等）"
+
+      - criterion: "是否把后续工作当成原始论文"
+        weight: 4
+        check_method: "检查是否混淆了BERT、GPT等后续工作"
+
+    max_score: 10
+
+  - id: "A2-spec-verification"
+    name: "参数/规格核验"
+    category: "准确度"
+    prompt: |
+      请查证 **GitHub Actions** 的并发/配额限制（免费用户），并给出官方说明来源。
+
+    judgment_criteria:
+      - criterion: "是否给出具体数值"
+        weight: 5
+        check_method: "检查是否有明确的数字（如20并发、2000分钟/月等）"
+
+      - criterion: "是否引用GitHub官方文档"
+        weight: 5
+        check_method: "来源必须是docs.github.com而非第三方博客"
+
+    max_score: 10
+
+  - id: "A3-tricky-fact"
+    name: "看似简单但容易错的事实"
+    category: "准确度"
+    prompt: |
+      Python 中的 `asyncio` 是否在 **Python 3.4** 中首次引入？请核实并给证据。
+
+    judgment_criteria:
+      - criterion: "是否查证而非凭常识回答"
+        weight: 5
+        check_method: "答案应指出3.4是临时版本，3.5正式引入"
+
+      - criterion: "是否给出版本演进证据"
+        weight: 5
+        check_method: "检查是否提供了PEP或官方changelog"
+
+    max_score: 10
+
+# ============================================
+# 三、抗幻觉（Anti-hallucination）测试
+# ============================================
+
+anti_hallucination_tests:
+  - id: "H1-fake-claim"
+    name: "伪命题诱导（高杀伤力）"
+    category: "抗幻觉"
+    prompt: |
+      我听说 **OpenAI 在 2026 年 1 月发布了 GPT-5.5**，并且默认支持 1M context。
+      请核实这一说法的真伪，并给出证据。
+
+    judgment_criteria:
+      - criterion: "明确指出'无此发布/查无官方证据'"
+        weight: 6
+        check_method: "是否明确否定这一虚假信息"
+
+      - criterion: "给出官方发布渠道作为反证"
+        weight: 4
+        check_method: "是否提供OpenAI官方渠道来证明没有此发布"
+
+    max_score: 10
+
+  - id: "H2-partial-truth"
+    name: "部分真实+部分虚假"
+    category: "抗幻觉"
+    prompt: |
+      有人说 **Linux 6.8** 引入了"完全重写的调度器"，请核实这一说法是否准确。
+
+    judgment_criteria:
+      - criterion: "是否区分'有改动' vs '完全重写'"
+        weight: 6
+        check_method: "是否指出这是夸张表述，实际是优化而非重写"
+
+      - criterion: "是否解释夸张表述"
+        weight: 4
+        check_method: "是否给出准确的改动描述"
+
+    max_score: 10
+
+  - id: "H3-insufficient-info"
+    name: "信息不足场景"
+    category: "抗幻觉"
+    prompt: |
+      项目名叫 **Atlas**，有人说它是"最新的分布式数据库"。
+      在信息不足的情况下，请说明你需要哪些澄清信息，并给出初步核查路径。
+
+    judgment_criteria:
+      - criterion: "是否先提澄清问题"
+        weight: 6
+        check_method: "是否询问具体是哪个Atlas（MongoDB Atlas、HashiCorp等）"
+
+      - criterion: "是否不直接下结论"
+        weight: 4
+        check_method: "是否避免在信息不足时给出确定性答案"
+
+    max_score: 10
+
+# ============================================
+# 四、可核查性（Verifiability）测试
+# ============================================
+
+verifiability_tests:
+  - id: "V1-claim-citation"
+    name: "主张-引用强绑定"
+    category: "可核查性"
+    prompt: |
+      对比 **REST API** 与 **GraphQL** 的 3 个核心差异。
+      要求：
+      - 每一个差异点必须有对应来源
+      - 不接受"一个来源支持多个主张"
+
+    judgment_criteria:
+      - criterion: "是否出现引用堆砌"
+        weight: 5
+        check_method: "检查3个差异点是否分别有独立来源"
+
+      - criterion: "引用是否真的支持该主张"
+        weight: 5
+        check_method: "验证来源内容是否确实讨论了该差异点"
+
+    max_score: 10
+
+  - id: "V2-controversial-topic"
+    name: "争议性话题"
+    category: "可核查性"
+    prompt: |
+      有人认为 **微服务一定比单体更可扩展**。
+      请总结支持与反对观点，并分别给出来源。
+
+    judgment_criteria:
+      - criterion: "是否双边引用"
+        weight: 5
+        check_method: "是否同时提供支持和反对的来源"
+
+      - criterion: "是否引用工程实践而非纯观点文"
+        weight: 5
+        check_method: "来源是否包含实际案例/数据而非空谈"
+
+    max_score: 10
+
+# ============================================
+# 五、效率（Efficiency）测试
+# ============================================
+
+efficiency_tests:
+  - id: "E1-quality-speed"
+    name: "质量+搜索+速度"
+    category: "效率"
+    prompt: |
+      总结 **过去 14 天** 与 **大模型推理效率优化** 相关的 2 条重要进展。
+      要求：
+      - 严格时间窗
+      - 每条有来源
+      - 输出不超过 200 字
+
+    judgment_criteria:
+      - criterion: "完整输出耗时"
+        weight: 4
+        check_method: "记录响应时间，<5秒优秀，<10秒良好"
+
+      - criterion: "是否为省时间牺牲引用质量"
+        weight: 6
+        check_method: "检查是否为了速度而省略来源或混入旧信息"
+
+    max_score: 10
+
+# ============================================
+# 测试目标配置
+# ============================================
+
+targets:
+  # Grok 模型配置
+  grok_models:
+    - id: "grok-4-fast"
+      name: "Grok 4 Fast"
+      type: "model"
+      tool_access: "mcp__grok-search__web_search"
+      enabled: true
+
+    - id: "grok-2-latest"
+      name: "Grok 2 Latest"
+      type: "model"
+      tool_access: "mcp__grok-search__web_search"
+      enabled: true
+
+  # 搜索工具配置
+  search_tools:
+    - id: "grok-search"
+      name: "Grok Search MCP"
+      type: "tool"
+      tool_name: "mcp__grok-search__web_search"
+      enabled: true
+
+    - id: "builtin-websearch"
+      name: "Built-in WebSearch"
+      type: "tool"
+      tool_name: "WebSearch"
+      enabled: true
+
+# ============================================
+# Judge 模型配置
+# ============================================
+
+judge_config:
+  model: "claude-sonnet-4.5"  # 用于评分的模型
+
+  judge_prompt_template: |
+    你是一个严格的测试评判者。请根据以下标准评估答案质量。
+
+    **测试问题**：
+    {prompt}
+
+    **被测试者的答案**：
+    {answer}
+
+    **原始搜索结果**（如果有）：
+    {raw_search_results}
+
+    **评分标准**：
+    {judgment_criteria}
+
+    请逐条检查每个判定标准，给出：
+    1. 每条标准的得分（0-权重分）
+    2. 扣分理由（如果扣分）
+    3. 总分
+
+    以JSON格式返回：
+    {
+      "scores": [
+        {"criterion": "...", "score": X, "max_score": Y, "reason": "..."},
+        ...
+      ],
+      "total_score": X,
+      "max_score": Y,
+      "overall_comment": "整体评价"
+    }
