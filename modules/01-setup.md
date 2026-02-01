@@ -13,7 +13,7 @@
 {
   "api_url": "https://api.x.ai/v1",
   "model": "grok-4-fast",
-  "config_status": "✅ complete",
+  "config_status": "complete",
   "connection_test": {
     "status": "success",
     "message": "Connected successfully",
@@ -25,12 +25,12 @@
 如果成功：
   - 记录当前配置
   - 标记 Grok Search 可用
-  - 向用户显示：✅ Grok Search MCP 可用 (当前模型: grok-4-fast)
+  - 向用户显示：Grok Search MCP 可用 (当前模型: grok-4-fast)
 
 如果失败：
   - 标记 Grok Search 不可用
   - 从测试目标中移除相关选项
-  - 向用户提示：⚠️ Grok Search MCP 不可用，将仅测试 Built-in WebSearch
+  - 向用户提示：Grok Search MCP 不可用，将仅测试 Built-in WebSearch
 ```
 
 ### 2. 创建测试会话目录
@@ -48,7 +48,7 @@
   content: ""  (空文件，后续用 Edit 追加内容)
 
 向用户显示：
-  📁 测试会话目录已创建: session_20260201_143022
+  测试会话目录已创建: session_20260201_143022
 ```
 
 ### 3. 初始化测试上下文
@@ -74,9 +74,9 @@ test_context = {
 
 ```
 向主 skill 返回：
-  ✅ 环境检查完成
-  📊 可用工具: Grok Search, WebSearch
-  📁 会话目录: session_20260201_143022
+  环境检查完成
+  可用工具: Grok Search, WebSearch
+  会话目录: session_20260201_143022
 
 准备进入步骤 3（用户选择测试范围）
 ```
@@ -93,7 +93,7 @@ test_context = {
 处理：
   1. 尝试使用临时目录
   2. 如果仍失败，提示用户并退出：
-     ❌ 无法创建测试目录，请检查权限
+     无法创建测试目录，请检查权限
 ```
 
 ### 场景 2：两个工具都不可用
@@ -103,7 +103,7 @@ test_context = {
 
 处理：
   1. 向用户提示：
-     ❌ 没有可用的搜索工具，无法执行测试
+     没有可用的搜索工具，无法执行测试
   2. 退出 skill
 ```
 
@@ -112,7 +112,7 @@ test_context = {
 ## 完成标志
 
 当以下条件满足时，初始化完成：
-- ✅ 至少一个搜索工具可用
-- ✅ 测试会话目录已创建
-- ✅ 日志文件已初始化
-- ✅ 测试上下文对象已准备
+- 至少一个搜索工具可用
+- 测试会话目录已创建
+- 日志文件已初始化
+- 测试上下文对象已准备
