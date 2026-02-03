@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__grok-search__get_config_info",
+      "Bash(python:*)",
+      "Bash(if not exist \"C:\\\\Users\\\\Miracle-VOR-001\\\\.claude\\\\skills\\\\search-benchmark\\\\utils\" mkdir \"C:\\\\Users\\\\Miracle-VOR-001\\\\.claude\\\\skills\\\\search-benchmark\\\\utils\")",
+      "mcp__grok-search__web_search",
+      "mcp__auggie-mcp__codebase-retrieval"
+    ]
+  }
+}
