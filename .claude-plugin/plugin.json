@@ -1,0 +1,12 @@
+{
+  "name": "search-benchmark",
+  "version": "2.0.0",
+  "description": "搜索能力基准测试 - 基于问答式评估的综合测试框架",
+  "author": {
+    "name": "Claude Code",
+    "email": "noreply@anthropic.com"
+  },
+  "keywords": ["search", "benchmark", "testing", "evaluation", "quality-assurance"],
+  "homepage": "https://github.com/anthropics/search-benchmark",
+  "license": "MIT"
+}

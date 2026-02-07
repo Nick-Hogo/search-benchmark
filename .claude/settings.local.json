@@ -5,7 +5,8 @@
       "Bash(python:*)",
       "Bash(if not exist \"C:\\\\Users\\\\Miracle-VOR-001\\\\.claude\\\\skills\\\\search-benchmark\\\\utils\" mkdir \"C:\\\\Users\\\\Miracle-VOR-001\\\\.claude\\\\skills\\\\search-benchmark\\\\utils\")",
       "mcp__grok-search__web_search",
-      "mcp__auggie-mcp__codebase-retrieval"
+      "mcp__auggie-mcp__codebase-retrieval",
+      "Bash(powershell -Command \"New-Item -Path ''.claude-plugin\\\\search-benchmark'' -ItemType Directory -Force\")"
     ]
   }
 }
